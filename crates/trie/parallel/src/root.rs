@@ -233,6 +233,15 @@ pub enum ParallelStateRootError {
     /// Provider error.
     #[error(transparent)]
     Provider(#[from] ProviderError),
+    /// Sparse Tree not revealed .
+    #[error("{_0}")]
+    SparseTreeNotRevealed(String),
+    /// Retention not enabled .
+    #[error("{_0}")]
+    RetentionNotEnabled(String),
+    /// Sparse Tree not revealed and Retention not enabled .
+    #[error("{_0}")]
+    SparseTreeAndRetentionNotAvailable(String),
     /// Other unspecified error.
     #[error("{_0}")]
     Other(String),
@@ -246,6 +255,11 @@ impl From<ParallelStateRootError> for ProviderError {
                 Self::Database(error)
             }
             ParallelStateRootError::Other(other) => Self::Database(DatabaseError::Other(other)),
+            ParallelStateRootError::SparseTreeNotRevealed(error) |
+            ParallelStateRootError::SparseTreeAndRetentionNotAvailable(error) |
+            ParallelStateRootError::RetentionNotEnabled(error) => {
+                Self::Database(DatabaseError::Other(error))
+            }
         }
     }
 }
